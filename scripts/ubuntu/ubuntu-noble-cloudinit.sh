@@ -31,7 +31,7 @@ runcmd:
 EOF
 
 sudo qm set $VMID --cicustom "vendor=local:snippets/ubuntu.yaml"
-sudo qm set $VMID --tags ubuntu-template,noble,cloudinit
+sudo qm set $VMID --tags ubuntu-template,noble,cloudinit,24.04
 sudo qm set $VMID --ciuser $USER
 sudo qm set $VMID --sshkeys ~/.ssh/authorized_keys
 sudo qm set $VMID --ipconfig0 ip=dhcp
