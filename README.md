@@ -95,7 +95,7 @@ Paste your SSH Keys in the authorized_keys on the Proxmox Host. If not allready 
 ## Change in the right directory
 
 ```
-cd /Ubuntu-CloudInit-Docs/samples/ubuntu
+cd /Proxmox-CloudInit-Docs/samples/ubuntu
 ```
 
 ## Allow scripts to execute
