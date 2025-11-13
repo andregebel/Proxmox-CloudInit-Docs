@@ -7,13 +7,11 @@ apt update -y && apt install libguestfs-tools -y
 cd /var/lib/vz/template/iso
 set -x
 rm -f debian-13-generic-amd64.qcow2
-wget -q https://cloud.debian.org/images/cloud/bookworm/latest/debian-13-generic-amd64.qcow2
-virt-customize -a /var/lib/vz/template/iso/debian-13-generic-amd64.qcow2 --install qemu-guest-agent
-virt-customize -a /var/lib/vz/template/iso/debian-13-generic-amd64.qcow2 --root-password password:Relation123!
-virt-customize -a /var/lib/vz/template/iso/debian-13-generic-amd64.qcow2 --run-command "echo -n > /etc/machine-id"
+wget -q https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2
 qemu-img resize debian-13-generic-amd64.qcow2 8G
+sudo qm destroy $VMID
  qm destroy $VMID
- qm create $VMID --name "debian-12-template" --ostype l26 \
+ qm create $VMID --name "debian-13-template" --ostype l26 \
     --memory 2048 --balloon 0 \
     --agent 1 \
     --bios ovmf --machine q35 --efidisk0 $STORAGE:0,pre-enrolled-keys=0 \
@@ -24,19 +22,18 @@ qemu-img resize debian-13-generic-amd64.qcow2 8G
  qm set $VMID --boot order=virtio0
  qm set $VMID --scsi1 $STORAGE:cloudinit
 
-#Just for Custom Cloud Config
-#cat << EOF |  tee /var/lib/vz/snippets/debian-13.yaml
-##cloud-config
-#runcmd:
-#    - apt-get update
-#    - apt-get install -y qemu-guest-agent
-#    - reboot
-## Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
-#EOF
-##Custom Cloud Config switch
-# qm set $VMID --cicustom "vendor=local:snippets/debian-13.yaml"
- qm set $VMID --tags debian-template,debian-13,cloudinit
- qm set $VMID --ciuser $USER
- qm set $VMID --sshkeys ~/.ssh/authorized_keys
- qm set $VMID --ipconfig0 ip=dhcp
- qm template $VMID
+cat << EOF | sudo tee /var/lib/vz/snippets/debian-13.yaml
+#cloud-config
+runcmd:
+    - apt-get update
+    - apt-get install -y qemu-guest-agent
+    - reboot
+# Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
+EOF
+
+sudo qm set $VMID --cicustom "vendor=local:snippets/debian-13.yaml"
+sudo qm set $VMID --tags debian-template,debian-13,cloudinit
+sudo qm set $VMID --ciuser $USER
+sudo qm set $VMID --sshkeys ~/.ssh/authorized_keys
+sudo qm set $VMID --ipconfig0 ip=dhcp
+sudo qm template $VMID
