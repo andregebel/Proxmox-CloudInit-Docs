@@ -9,7 +9,6 @@ set -x
 rm -f debian-13-generic-amd64.qcow2
 wget -q https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2
 qemu-img resize debian-13-generic-amd64.qcow2 8G
-sudo qm destroy $VMID
  qm destroy $VMID
  qm create $VMID --name "debian-13-template" --ostype l26 \
     --memory 2048 --balloon 0 \
