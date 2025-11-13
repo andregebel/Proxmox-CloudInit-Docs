@@ -81,7 +81,7 @@ In the scripts folder I have included some pre-made shell scripts to create prox
 ## Clone repository
 
 ```
-git clone https://github.com/andregebel/Ubuntu-CloudInit-Docs.git
+git clone https://github.com/andregebel/Proxmox-CloudInit-Docs.git
 ```
 
 ## Prepare the Authorized SSH Keys
