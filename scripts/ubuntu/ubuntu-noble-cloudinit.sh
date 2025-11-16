@@ -21,7 +21,7 @@ qemu-img resize noble-server-cloudimg-amd64.img 8G
  qm set $VMID --boot order=virtio0
  qm set $VMID --scsi1 $STORAGE:cloudinit
 
-cat << EOF | sudo tee /var/lib/vz/snippets/ubuntu.yaml
+cat << EOF | tee /var/lib/vz/snippets/ubuntu.yaml
 #cloud-config
 runcmd:
     - apt-get update
