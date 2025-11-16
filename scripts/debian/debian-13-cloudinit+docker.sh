@@ -1,0 +1,53 @@
+#! /bin/bash
+
+VMID=8002
+STORAGE=ssd1
+
+apt update -y && apt install libguestfs-tools -y
+cd /var/lib/vz/template/iso
+set -x
+rm -f debian-13-generic-amd64.qcow2
+wget -q https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2
+qemu-img resize debian-13-generic-amd64.qcow2 8G
+ qm destroy $VMID
+ qm create $VMID --name "debian-13-template" --ostype l26 \
+    --memory 2048 --balloon 0 \
+    --agent 1 \
+    --bios ovmf --machine q35 --efidisk0 $STORAGE:0,pre-enrolled-keys=0 \
+    --cpu x86-64-v2-AES --cores 2 --numa 1 \
+    --net0 virtio,bridge=vmbr0,mtu=1 \
+    --serial0 socket
+ qm importdisk $VMID debian-13-generic-amd64.qcow2 $STORAGE
+ qm set $VMID --scsihw virtio-scsi-pci --virtio0 $STORAGE:vm-$VMID-disk-1,discard=on
+ qm set $VMID --boot order=virtio0
+ qm set $VMID --scsi1 $STORAGE:cloudinit
+
+cat << 'EOF' | tee /var/lib/vz/snippets/debian-12-docker.yaml
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - qemu-guest-agent
+  - gnupg
+  - ca-certificates
+  - curl
+  - docker.io
+
+runcmd:
+  # Enable Proxmox guest agent
+  - systemctl enable --now qemu-guest-agent
+
+  # Enable Docker service
+  - systemctl enable --now docker
+
+  # Optional: reboot after install
+  - reboot
+EOF
+
+sudo qm set $VMID --cicustom "vendor=local:snippets/debian-13.yaml"
+sudo qm set $VMID --tags debian-template,debian-13,cloudinit
+sudo qm set $VMID --ciuser $USER
+sudo qm set $VMID --sshkeys ~/.ssh/authorized_keys
+sudo qm set $VMID --ipconfig0 ip=dhcp
+sudo qm template $VMID
