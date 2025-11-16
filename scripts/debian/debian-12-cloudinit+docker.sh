@@ -34,14 +34,17 @@ packages:
   - curl
 
 runcmd:
-  # Keyring-Verzeichnis anlegen
+  # Ensure guest agent is enabled
+  - systemctl enable --now qemu-guest-agent
+
+  # Keyring directory
   - install -m 0755 -d /etc/apt/keyrings
 
-  # Docker GPG-Key herunterladen
+  # Docker GPG key
   - curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
   - chmod a+r /etc/apt/keyrings/docker.asc
 
-  # Repository hinzufügen
+  # Add Docker repository
   - |
     tee /etc/apt/sources.list.d/docker.sources <<EOF
     Types: deb
@@ -51,10 +54,14 @@ runcmd:
     Signed-By: /etc/apt/keyrings/docker.asc
     EOF
 
-  # Paketlisten aktualisieren
+  # Update and install Docker
   - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-  # Neustart am Ende
+  # Enable Docker service
+  - systemctl enable --now docker
+
+  # Reboot after install
   - reboot
 
 # Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
