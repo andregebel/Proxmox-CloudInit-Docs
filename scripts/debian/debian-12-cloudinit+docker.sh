@@ -35,10 +35,13 @@ packages:
   - docker.io
 
 runcmd:
+  # Enable Proxmox guest agent
   - systemctl enable --now qemu-guest-agent
+
+  # Enable Docker service
   - systemctl enable --now docker
 
-  # Reboot after install
+  # Optional: reboot after install
   - reboot
 
 # Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
