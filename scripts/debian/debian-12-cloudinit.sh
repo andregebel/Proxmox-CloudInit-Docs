@@ -22,7 +22,7 @@ qemu-img resize debian-12-generic-amd64.qcow2 8G
  qm set $VMID --boot order=virtio0
  qm set $VMID --scsi1 $STORAGE:cloudinit
 
-cat << EOF | sudo tee /var/lib/vz/snippets/debian-12.yaml
+cat << EOF | tee /var/lib/vz/snippets/debian-12.yaml
 #cloud-config
 runcmd:
     - apt-get update
