@@ -15,7 +15,8 @@ qemu-img resize debian-12-generic-amd64.qcow2 8G
     --agent 1 \
     --bios ovmf --machine q35 --efidisk0 $STORAGE:0,pre-enrolled-keys=0 \
     --cpu x86-64-v2-AES --cores 2 --numa 1 \
-    --net0 virtio,bridge=vmbr0,mtu=1
+    --net0 virtio,bridge=vmbr0,mtu=1 \
+    --serial0 socket
  qm importdisk $VMID debian-12-generic-amd64.qcow2 $STORAGE
  qm set $VMID --scsihw virtio-scsi-pci --virtio0 $STORAGE:vm-$VMID-disk-1,discard=on
  qm set $VMID --boot order=virtio0
