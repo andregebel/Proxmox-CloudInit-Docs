@@ -24,26 +24,16 @@ qemu-img resize debian-12-generic-amd64+docker.qcow2 8G
 
 cat << EOF | tee /var/lib/vz/snippets/debian-12-docker.yaml
 #cloud-config
-package_update: true
-package_upgrade: true
-
-packages:
-  - qemu-guest-agent
-  - gnupg
-  - ca-certificates
-  - curl
-  - docker.io
-
 runcmd:
-  # Enable Proxmox guest agent
-  - systemctl enable --now qemu-guest-agent
-
-  # Enable Docker service
-  - systemctl enable --now docker
-
-  # Optional: reboot after install
-  - reboot
-
+    - apt-get update
+    - apt-get install -y qemu-guest-agent gnupg
+    - install -m 0755 -d /etc/apt/keyrings
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    - chmod a+r /etc/apt/keyrings/docker.gpg
+    - echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - apt-get update
+    - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    - reboot
 # Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
 EOF
 
