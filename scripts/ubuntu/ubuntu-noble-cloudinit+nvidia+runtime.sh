@@ -21,7 +21,7 @@ qemu-img resize noble-server-cloudimg-amd64.img 8G
  qm set $VMID --boot order=virtio0
  qm set $VMID --scsi1 $STORAGE:cloudinit
 
-cat << EOF | sudo tee /var/lib/vz/snippets/ubuntu-noble-runtime.yaml
+cat << EOF | tee /var/lib/vz/snippets/ubuntu-noble-runtime.yaml
 #cloud-config
 runcmd:
     - curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
