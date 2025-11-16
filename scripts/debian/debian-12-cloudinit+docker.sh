@@ -32,33 +32,10 @@ packages:
   - gnupg
   - ca-certificates
   - curl
+  - docker.io
 
 runcmd:
-  # Ensure guest agent is enabled
   - systemctl enable --now qemu-guest-agent
-
-  # Keyring directory
-  - install -m 0755 -d /etc/apt/keyrings
-
-  # Docker GPG key
-  - curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-  - chmod a+r /etc/apt/keyrings/docker.asc
-
-  # Add Docker repository
-  - |
-    tee /etc/apt/sources.list.d/docker.sources <<EOF
-    Types: deb
-    URIs: https://download.docker.com/linux/debian
-    Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
-    Components: stable
-    Signed-By: /etc/apt/keyrings/docker.asc
-    EOF
-
-  # Update and install Docker
-  - apt-get update
-  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-  # Enable Docker service
   - systemctl enable --now docker
 
   # Reboot after install
