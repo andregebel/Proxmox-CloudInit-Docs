@@ -3,7 +3,6 @@
 VMID=8000
 STORAGE=ssd1
 
-apt update -y && apt install libguestfs-tools -y
 cd /var/lib/vz/template/iso
 set -x
 rm -f debian-12-generic-amd64.qcow2
