@@ -3,6 +3,7 @@
 VMID=8200
 STORAGE=ssd1
 
+apt update -y && apt install libguestfs-tools -y
 cd /var/lib/vz/template/iso
 set -x
 rm -f noble-server-cloudimg-amd64.img
