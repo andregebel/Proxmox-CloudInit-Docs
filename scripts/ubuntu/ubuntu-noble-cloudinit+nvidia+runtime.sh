@@ -33,9 +33,9 @@ runcmd:
 # Taken from https://forum.proxmox.com/threads/combining-custom-cloud-init-with-auto-generated.59008/page-3#post-428772
 EOF
 
-sudo qm set $VMID --cicustom "vendor=local:snippets/ubuntu-noble-runtime.yaml"
-sudo qm set $VMID --tags ubuntu-template,noble,cloudinit,nvidia,24.04
-sudo qm set $VMID --ciuser $USER
-sudo qm set $VMID --sshkeys ~/.ssh/authorized_keys
-sudo qm set $VMID --ipconfig0 ip=dhcp
-sudo qm template $VMID
+qm set $VMID --cicustom "vendor=local:snippets/ubuntu-noble-runtime.yaml"
+qm set $VMID --tags ubuntu-template,noble,cloudinit,nvidia,24.04
+qm set $VMID --ciuser $USER
+qm set $VMID --sshkeys ~/.ssh/authorized_keys
+qm set $VMID --ipconfig0 ip=dhcp
+qm template $VMID
