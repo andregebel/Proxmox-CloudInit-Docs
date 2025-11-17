@@ -58,9 +58,9 @@ runcmd:
   #- usermod -aG docker ubuntu
 EOF
 
-sudo qm set $VMID --cicustom "vendor=local:snippets/ubuntu+docker.yaml"
-sudo qm set $VMID --tags ubuntu-template,noble,cloudinit,24.04,docker
-sudo qm set $VMID --ciuser $USER
-sudo qm set $VMID --sshkeys ~/.ssh/authorized_keys
-sudo qm set $VMID --ipconfig0 ip=dhcp
-sudo qm template $VMID
+qm set $VMID --cicustom "vendor=local:snippets/ubuntu+docker.yaml"
+qm set $VMID --tags ubuntu-template,noble,cloudinit,24.04,docker
+qm set $VMID --ciuser $USER
+qm set $VMID --sshkeys ~/.ssh/authorized_keys
+qm set $VMID --ipconfig0 ip=dhcp
+qm template $VMID
