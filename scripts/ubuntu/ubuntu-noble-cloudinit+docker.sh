@@ -10,7 +10,7 @@ rm -f noble-server-cloudimg-amd64.img
 wget -q https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 qemu-img resize noble-server-cloudimg-amd64.img 40G
  qm destroy $VMID
- qm create $VMID --name "ubuntu-24.04.LTS+Docker-template" --ostype l26 \
+ qm create $VMID --name "ubuntu-24.04.LTS-docker-template" --ostype l26 \
     --memory 8192 --balloon 0 \
     --agent 1 \
     --bios ovmf --machine q35 --efidisk0 $STORAGE:0,pre-enrolled-keys=0 \
