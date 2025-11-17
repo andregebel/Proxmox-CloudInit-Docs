@@ -1,11 +1,11 @@
-# Making a Ubuntu 24.04 VM Template for Proxmox and CloudInit
+# Making some Template for Proxmox and CloudInit
 
-This is a short guide for setting up a Ubuntu VM template in Proxmox using CloudInit in a scriptable manner.
+This is a short guide for setting up some VM templates in Proxmox using CloudInit in a scriptable manner.
 
 For this guide I have made a few assumptions:
 
 * You want your VMs to boot via UEFI as opposed to BIOS
-* Your Proxmox node's main storage is called `local-zfs`
+* Your Proxmox node's main storage is called `SSD1`
 * You want to use Ubuntu 24.04
 * You have SSH keys stored in ~/.ssh/authorized_keys of your regular user's home folder
 
@@ -27,7 +27,7 @@ The next step is to create a basic VM that we'll build upon:
     #sudo qm create 8001 --name "ubuntu-2404-cloudinit-template" --ostype l26 \
         --memory 1024 \
         --agent 1 \
-        --bios ovmf --machine q35 --efidisk0 local-zfs:0,pre-enrolled-keys=0 \
+        --bios ovmf --machine q35 --efidisk0 SSD1:0,pre-enrolled-keys=0 \
         --cpu host --sockets 1 --cores 1 \
         --vga serial0 --serial0 socket  \
         --net0 virtio,bridge=vmbr0
@@ -36,10 +36,10 @@ Feel free to change the 8001 to whatever you like, so long as you replace the 80
 
 ## Configuring hardware
 
-    sudo qm importdisk 8001 noble-server-cloudimg-amd64.img local-zfs
-    sudo qm set 8001 --scsihw virtio-scsi-pci --virtio0 local-zfs:vm-8001-disk-1,discard=on
+    sudo qm importdisk 8001 noble-server-cloudimg-amd64.img SSD1
+    sudo qm set 8001 --scsihw virtio-scsi-pci --virtio0 SSD1:vm-8001-disk-1,discard=on
     sudo qm set 8001 --boot order=virtio0
-    sudo qm set 8001 --scsi1 local-zfs:cloudinit
+    sudo qm set 8001 --scsi1 SSD1:cloudinit
 
 The first command imports that image we downloaded earlier, if your disk storage is not local-zfs (for example local-lvm) then replace it with whatever you wish. Next command attaches the disk to the VM. If your disk storage is not on SSDs (which it should be) omit `,discard=on`. The third command sets the boot order. Fourth adds the cloudinit pseudo-cdrom drive.
 
@@ -61,7 +61,7 @@ This file performs two purposes, the first rather obvious (installing qemu-guest
 
     sudo qm set 8001 --cicustom "vendor=local:snippets/vendor.yaml"
     sudo qm set 8001 --tags ubuntu-template,24.04,cloudinit
-    sudo qm set 8001 --ciuser untouchedwagons
+    sudo qm set 8001 --ciuser ubuntu
     sudo qm set 8001 --cipassword $(openssl passwd -6 $CLEARTEXT_PASSWORD)
     sudo qm set 8001 --sshkeys ~/.ssh/authorized_keys
     sudo qm set 8001 --ipconfig0 ip=dhcp
